@@ -18,14 +18,23 @@ const pool = mysql.createPool({
 });
 
 app.get('/users', async (req, res) => {
+    try{
     const [rows] = await pool.query('SELECT * FROM users');
     return res.status(200).json({
         msg: "Sucesso ao retornar usuários",
         data: rows 
     })
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Erro no servidor, tente novamente! "
+        })
+    }
 });
 
 app.post('/users', async (req, res) =>{
+    try{
     const {name, email} = req.body;
     
     const [result] = await pool.query('INSERT INTO users (id, name, email) VALUES (null, ?, ?)',
@@ -35,9 +44,18 @@ app.post('/users', async (req, res) =>{
     return res.status(201).json({
         message: "Usuario criado com sucesso!"
     })
+    }
+
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Erro no servidor, tente novamente! "
+        })
+    }
 });
 
 app.put('/users/:id', async (req, res)=>{
+    try{
     const {id} = req.params;
     const {name, email} = req.body;
 
@@ -47,11 +65,18 @@ app.put('/users/:id', async (req, res)=>{
 
     return res.status(200).json ({
         message: "sucesso ao atualizar usuario"
-    });
-
+    })
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Erro no servidor, tente novamente! "
+        })
+    }
 });
 
 app.delete('/users/:id', async (req, res) => {
+    try{
     const {id} = req.params;
 
     const [result] = await pool.query(
@@ -61,8 +86,15 @@ app.delete('/users/:id', async (req, res) => {
 
     return res.status(200).json({
         message: "Usuário deletado com sucesso."
-    })
-})
+    }) 
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Erro no servidor, tente novamente! "
+        })
+    }
+});
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
